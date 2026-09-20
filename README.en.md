@@ -24,8 +24,8 @@ A DSH one-click access toolkit for the Beijing University of Posts and Telecommu
 | --- | --- |
 | `dsh-install.zip` | One-click install archive (v1.0.0, 61.23 MB): installs DSH automatically, then guides you through configuration; for fresh machines. SHA-256: `a04ab4466b2ca8835fa46e4bdc97bfe64a650e816e0ae7480dca3fa81dde367e` |
 | `bupt-dsh-setup.zip` | Windows one-click configuration archive (v1.0.0, 30.61 MB): for environments where DSH is already installed. SHA-256: `23e7dd63a53fc4033e428be229b4b07f601c25e01610be0356f44d3391f94cec` |
-| `dsh-install-mac.zip` | macOS one-click installer: downloads Node.js, installs DSH, then completes configuration. SHA-256: `5412ff3b6813b578d2264378b5c1355e870ed0793c499e4be86867f0fe309303` |
-| `bupt-dsh-setup-mac.zip` | macOS one-click configuration archive for systems with Node.js/DSH already installed. SHA-256: `472b1a1b3e9b2753f04aabebe6e4a1b2fbf3b7635b255a0b301a9ed865cc8f70` |
+| `dsh-install-mac.zip` | macOS one-click installer: downloads Node.js, installs DSH, then completes configuration. SHA-256: `b4a9342954eae2a1be4c5a72ad76ec10dc8b9d481710f5372f55e7b5dac2c3d2` |
+| `bupt-dsh-setup-mac.zip` | macOS one-click configuration archive for systems with Node.js/DSH already installed. SHA-256: `99986686a5eee0ca499ad99958670cfaad3b2146f2a10856bdbb85be276f705d` |
 | `README.md` | Chinese documentation |
 | `README.en.md` | English documentation |
 | `SECURITY.md` | Security policy |
