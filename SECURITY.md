@@ -2,9 +2,9 @@
 
 ## 支持范围 / Supported Versions
 
-当前维护版本为 `1.0.0`。安全修复优先针对当前版本及 GitHub Release 中明确标注的版本。
+当前维护版本为 `1.0.0`，覆盖 `bupt-dsh-setup.zip` 与 `dsh-install.zip` 两个发布包。安全修复优先针对当前版本及 GitHub Release 中明确标注的版本。
 
-The maintained version is `1.0.0`. Security fixes target the current version and any versions explicitly listed in GitHub Releases.
+The maintained version is `1.0.0`, covering both `bupt-dsh-setup.zip` and `dsh-install.zip`. Security fixes target the current version and any versions explicitly listed in GitHub Releases.
 
 ## 漏洞报告 / Reporting Vulnerabilities
 
@@ -30,9 +30,10 @@ https://github.com/yifanchen12/BUPTapi-dsh/security/advisories/new
 - BUPT API Key 是学校颁发的访问凭据，等同账号口令。不要截图、公开发布或提交到仓库。
 - `.credentials.yaml` 及其时间戳备份（`.bupt-backup-*`）均包含密钥，属于敏感文件；不得上传、粘贴到 Issue 或随调试压缩包公开分享。
 - 只建议在可信网络中运行（校园网或校园 VPN）；不要在公共 Wi-Fi、访客网络中直连校园接口。
-- DSH / Node.js 本体请通过官方渠道安装；本工具不包含也不分发 DSH。
-- 提示“北邮接口暂不可达”时，先确认校园 VPN；提示“未找到 dsh.cmd”时，检查 DSH / Node.js 安装与命令行 PATH。
-- 下载发布压缩包后请核对 SHA-256 摘要，防止传输过程中被替换。
+- `bupt-dsh-setup.zip` 不含 DSH 本体，需要已安装 DSH / Node.js；`dsh-install.zip` 中的 `dsh-download-setup.exe` 会自动完成安装：仅从 nodejs.org 官方地址下载 Node.js（核对官方 `SHASUMS256.txt`），再从 npm 官方仓库安装 `@deepseek-ai/dsh`，不捆绑任何第三方软件。
+- 若官方校验值获取失败，安装器会给出提示并依靠 TLS 继续；要求严格的用户可手动安装 DSH / Node.js 并核对下载校验值后，再使用一键配置包。
+- 提示“北邮接口暂不可达”时，先确认校园 VPN；提示“未找到 dsh.cmd”时，先运行 `dsh-download-setup.exe` 或检查 DSH / Node.js 安装与命令行 PATH。
+- 下载发布压缩包后请核对 SHA-256 摘要（见 README 发布内容表），防止传输过程中被替换。
 
 ## 安全设计说明 / Security Design Notes
 
@@ -42,15 +43,17 @@ https://github.com/yifanchen12/BUPTapi-dsh/security/advisories/new
 - 若检测到已有未由本工具管理的 `llm-pi-ai:` 或 `agent-default-model:` 顶层配置，写入会中止，避免覆盖原有模型配置。
 - 启动前使用 Bearer 认证探测 `https://myai.bupt.edu.cn/llm-gw/v1/models`（12 秒超时）；探活失败不阻止 DSH 启动。
 - DSH Web 以 `dsh web --port 3080` 启动，本地页面为 `http://127.0.0.1:3080`，等待端口就绪最长 35 秒。
-- 程序没有遥测、广告 SDK 或第三方统计服务；除校园侧接口探活与 DSH 自身连接外，不与其他外部服务通信。
+- `dsh-download-setup.exe` 将 Node.js / DSH 安装到当前用户目录 `%LOCALAPPDATA%\Programs\nodejs`，不请求管理员权限；如需命令行直接使用 `dsh`，会把该目录追加到当前用户 `PATH`（HKCU\Environment，去重），不改动系统级环境变量。
+- 程序没有遥测、广告 SDK 或第三方统计服务；除安装所需的 nodejs.org / npm registry 访问、校园侧接口探活与 DSH 自身连接外，不与其他外部服务通信。
 
 ## 已知边界 / Known Limitations
 
 - BUPT API Key 以明文形式保存在本机 `.credentials.yaml`，时间戳备份同样包含明文密钥；本工具不提供加密存储。在共享计算机上，其他账户可能读取该用户目录下的配置，请使用私人账户并妥善管理本机文件权限。
 - 工具不具备端到端加密或身份认证机制，不能防范已控制本机的攻击者。
+- `dsh-download-setup.exe` 需要访问 nodejs.org 与 npm registry；若网络环境屏蔽外网，安装环节将失败。安装的 Node.js 便携版自带 npm，全局包与 `dsh.cmd` 均位于用户目录，不写入 Program Files。
 - 校园侧接口地址、认证策略或 DSH 配置结构变化可能导致探活失败、模型不可用或启动失败，需要人工复核。
 - 本策略仅覆盖本仓库分发的发布压缩包；DSH 本体及 Node.js 的安全由各自官方渠道负责。
 
 ---
 
-The maintained version is `1.0.0`. Report issues privately and never include BUPT API Keys, credential backups, or personal paths. The tool writes the Key and model configuration into `%DSH_HOME%` (default `%USERPROFILE%\.dsh`) with timestamped backups, protects unmanaged model configuration from being overwritten, does not bundle or distribute DSH itself, has no telemetry, and is intended for use on the BUPT campus network or VPN only.
+The maintained version is `1.0.0`. Report issues privately and never include BUPT API Keys, credential backups, or personal paths. The tool writes the Key and model configuration into `%DSH_HOME%` (default `%USERPROFILE%\.dsh`) with timestamped backups, protects unmanaged model configuration from being overwritten, and launches DSH Web locally on port 3080. `dsh-download-setup.exe`, bundled in `dsh-install.zip`, installs Node.js and DSH under the current user's directory without administrator rights: Node.js is downloaded from the official nodejs.org distribution (verified against the official SHASUMS256.txt) and DSH is installed from the official npm registry; nothing else is bundled and there is no telemetry. Both packages are intended for use on the BUPT campus network or VPN only.

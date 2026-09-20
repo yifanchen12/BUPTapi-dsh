@@ -2,47 +2,61 @@
 
 [English](README.en.md) · [安全策略](SECURITY.md)
 
-面向北京邮电大学校园网环境的 DSH 一键配置与启动工具，以单个 ZIP 压缩包发布。解压后双击 `bupt-dsh-setup.exe`，输入学校发放的 BUPT API Key，程序即写入 DSH 配置与本地凭据、启动 DSH Web，并自动打开浏览器页面。当前版本：**1.0.0**。
+面向北京邮电大学校园网环境的 DSH 一键接入工具集，包含两个 ZIP 发布包：`bupt-dsh-setup.zip`（一键配置与启动）与 `dsh-install.zip`（一键安装 + 一键配置，适合从未安装过 DSH / Node.js 的新生）。解压后双击对应 EXE，输入学校发放的 BUPT API Key，程序即写入 DSH 配置与本地凭据、启动 DSH Web，并自动打开浏览器页面。当前版本：**1.0.0**。
 
 ## 功能与边界
 
-- 一键配置：自动写入 `settings.yaml` 和 `.credentials.yaml`，无需手动编辑配置文件。
+- 一键配置（`bupt-dsh-setup.exe`）：自动写入 `settings.yaml` 和 `.credentials.yaml`，无需手动编辑配置文件。
+- 一键安装（`dsh-download-setup.exe`）：自动下载并安装 Node.js v24.19.0 与 DSH（`@deepseek-ai/dsh`），全程无需管理员权限；检测到已安装则自动复用。
+- 官方来源：Node.js 取自 nodejs.org 官方分发并核对官方 `SHASUMS256.txt`，DSH 自 npm 官方仓库安装。
 - 隐私输入：BUPT API Key 输入时不显示字符，也不会写入压缩包、源码或普通日志。
 - 自动备份：写入前对已有配置生成带时间戳的备份（`.bupt-backup-<时间戳>`），便于回退。
 - 覆盖保护：检测到已有未由本工具管理的 `llm-pi-ai:` 或 `agent-default-model:` 顶层配置时中止写入，避免覆盖原模型配置。
 - 接口探活：启动前探测北邮接口（12 秒超时）；不可达时给出提示，仍会继续启动 DSH。
 - 自动启动：查找 `dsh.cmd` 并执行 `dsh web --port 3080`，等待端口就绪后打开 `http://127.0.0.1:3080`。
-- 更新密钥：再次运行本 EXE 可更新 Key 并重新启动 DSH；使用 `--config-only` 参数只写入配置、不启动。
-- 边界：不包含 DSH / Node.js 本体，不负责 API Key 的申请与发放，不支持账号注册或缴费业务。
+- 更新密钥：再次运行配置 EXE 可更新 Key 并重新启动 DSH；使用 `--config-only` 参数只写入配置、不启动。
+- 边界：不负责 API Key 的申请与发放，不支持账号注册或缴费业务。
 
 ## 发布内容
 
 | 文件 | 说明 |
 | --- | --- |
-| `bupt-dsh-setup.zip` | 发布压缩包（v1.0.0），SHA-256：`a78db726ac23115440f3201d29a73ed84ddacd2a029494b9c6d5f014c6dbfad5` |
+| `dsh-install.zip` | 一键安装包（v1.0.0，61.23 MB）：自动安装 DSH 后进入配置流程，适合未安装 DSH 的新机。SHA-256：`a04ab4466b2ca8835fa46e4bdc97bfe64a650e816e0ae7480dca3fa81dde367e` |
+| `bupt-dsh-setup.zip` | 一键配置包（v1.0.0，30.61 MB）：面向已安装 DSH 的环境，直接配置并启动。SHA-256：`a78db726ac23115440f3201d29a73ed84ddacd2a029494b9c6d5f014c6dbfad5` |
 | `README.md` | 中文文档 |
 | `README.en.md` | 英文文档 |
 | `SECURITY.md` | 安全策略 |
 
-压缩包内部结构：
+两个压缩包的内部结构：
 
 ```text
-bupt-dsh-setup.zip
-├── bupt-dsh-setup.exe      # 一键配置与启动程序（v1.0.0）
-└── README.txt              # 使用说明
+dsh-install.zip                    bupt-dsh-setup.zip
+├── dsh-download-setup.exe        ├── bupt-dsh-setup.exe
+├── bupt-dsh-setup.exe            └── README.txt
+└── README.txt
 ```
 
 ## 环境要求
 
-- Windows 10 / 11（已验证：Windows 11）。
-- 已安装 DSH / Node.js，且命令行中可以运行 `dsh`（即能找到 `dsh.cmd`）。
+- Windows 10 / 11（已验证：Windows 11），64 位。
+- `dsh-install.zip`：无需预装任何软件，仅需可访问外网（预计下载 50–80 MB），安装全程无需管理员权限。
+- `bupt-dsh-setup.zip`：需要已安装 DSH / Node.js，且命令行中可以运行 `dsh`（即能找到 `dsh.cmd`）。
 - 北京邮电大学校园网络；校外使用前请先连接校园 VPN。
 
 ## 安装与使用
 
+新生快速开始（推荐使用 `dsh-install.zip`）：
+
+1. 下载 `dsh-install.zip` 并解压到任意目录。
+2. 双击 `dsh-download-setup.exe`，等待自动安装（约 3–10 分钟，视网络而定），全程无需管理员权限。
+3. 安装完成后按提示输入 `Y` 进入配置流程；输入学校发放的 BUPT API Key（输入时不显示字符）。
+4. 等待浏览器自动打开 DSH 页面（`http://127.0.0.1:3080`）。
+
+已安装 DSH / Node.js 的用户：
+
 1. 下载 `bupt-dsh-setup.zip` 并解压到任意目录。
 2. 双击 `bupt-dsh-setup.exe`。
-3. 输入学校发放的 BUPT API Key（输入时不会显示字符）。
+3. 输入学校发放的 BUPT API Key（输入时不显示字符）。
 4. 等待浏览器自动打开 DSH 页面（`http://127.0.0.1:3080`）。
 
 仅写入配置、不启动：
@@ -52,7 +66,7 @@ bupt-dsh-setup.exe --config-only
 ```
 
 - 提示“北邮接口暂不可达”：请确认校园 VPN 已连接；程序仍会继续启动 DSH。
-- 提示“未找到 dsh.cmd”：请先安装 DSH / Node.js，再重新运行此 EXE。
+- 提示“未找到 dsh.cmd”：请先运行 `dsh-download-setup.exe` 完成安装，或手动安装 DSH / Node.js 后重试。
 - 提示“DSH 未在预期时间内打开（端口 3080）”：请查看 DSH 窗口中的错误信息。
 
 ## 配置与数据
@@ -65,19 +79,20 @@ bupt-dsh-setup.exe --config-only
 | 原配置备份 | `settings.yaml.bupt-backup-<时间戳>`、`.credentials.yaml.bupt-backup-<时间戳>` |
 | 模型接口 | `https://myai.bupt.edu.cn/llm-gw/v1`，模型 `deepseek-v4-flash` |
 | 本地页面 | `http://127.0.0.1:3080` |
-| DSH 本体 | 使用本机已安装的 DSH / Node.js，不随程序分发 |
+| 安装位置 | 一键安装包将 Node.js / DSH 安装到用户目录 `%LOCALAPPDATA%\Programs\nodejs`（含 `node.exe` 与 `dsh.cmd`），并把该目录追加到当前用户 `PATH`（已存在则不重复添加） |
 
 ## 安全
 
 - BUPT API Key 属于学校颁发的访问凭据，等同账号口令；`.credentials.yaml` 及其时间戳备份均为敏感文件，不要上传、粘贴到 Issue 或随调试包公开分享。
-- 本程序不包含 DSH 本体，请通过官方渠道安装 DSH / Node.js，并核对下载来源与 SHA-256 校验值。
+- `dsh-install.zip` 中的安装器只从 nodejs.org 官方地址下载 Node.js（核对官方 `SHASUMS256.txt`），再从 npm 官方仓库安装 DSH；不捆绑任何第三方软件，无遥测。
 - 校外使用必须连接校园 VPN；不要在公共 Wi-Fi、访客网络等不可信环境中直连校园接口。
-- 下载发布压缩包后建议核对上文 SHA-256 摘要。
+- 下载发布压缩包后建议核对上表 SHA-256 摘要。
 - 发现安全问题请使用 GitHub 私密漏洞报告，详见 [安全策略](SECURITY.md)。
 
 ## 适用边界
 
 - 工具依赖 DSH 命令行环境、校园网络可达性与校园侧接口状态；接口地址或配置结构变化可能导致启动失败或模型不可用，需要人工复核。
+- `dsh-download-setup.exe` 需要访问 nodejs.org 与 npm registry；校内网络若屏蔽外网，安装环节会失败，请先连接外网（或可用代理）再运行。
 - 工具只负责配置与启动，不提供 API Key 申请、账号管理或已删除配置的恢复能力。
 - 原配置以带时间戳的备份文件保留；确认无需回退后可手动删除 `.bupt-backup-*` 文件。
 
