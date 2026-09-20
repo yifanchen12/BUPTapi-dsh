@@ -2,7 +2,7 @@
 
 [简体中文](README.md) · [Security policy](SECURITY.md)
 
-A DSH one-click access toolkit for the Beijing University of Posts and Telecommunications (BUPT) campus-network environment, distributed as two ZIP archives: `bupt-dsh-setup.zip` (one-click configuration and launch) and `dsh-install.zip` (one-click install + configuration, for fresh machines that have never installed DSH / Node.js). Unzip the archive and double-click the EXE; enter the BUPT API Key issued by the university, and the tool writes the DSH configuration and local credential, starts DSH Web, and opens the page in your browser. Current version: **1.0.0**.
+A DSH one-click access toolkit for the Beijing University of Posts and Telecommunications (BUPT) campus-network environment, with configuration and installer packages for Windows and macOS. Unzip the archive and double-click the corresponding entry point; enter the BUPT API Key issued by the university, and the tool writes the DSH configuration and local credential, starts DSH Web, and opens the page in your browser. Current version: **1.0.0**.
 
 ## Features and boundaries
 
@@ -11,7 +11,8 @@ A DSH one-click access toolkit for the Beijing University of Posts and Telecommu
 - Official sources: Node.js is fetched from the official nodejs.org distribution and verified against the official `SHASUMS256.txt`; DSH is installed from the official npm registry.
 - Private input: the BUPT API Key is not echoed while typing and is never written into the archive, source code, or normal logs.
 - Automatic backup: existing configuration files are backed up with a timestamp (`.bupt-backup-<timestamp>`) before writing.
-- Overwrite protection: writing is aborted when unmanaged top-level `llm-pi-ai:` or `agent-default-model:` sections are detected, so existing model configuration is never silently replaced.
+- Configuration merge: existing official or other Provider routes are preserved; the BUPT campus model is appended, with the previous configuration backed up before changing the default model.
+- macOS support: `.command` one-click entry points support both Apple Silicon (arm64) and Intel (x86_64).
 - Endpoint probe: the BUPT endpoint is probed before launch (12 s timeout); if unreachable, a hint is printed and DSH still starts.
 - Automatic launch: finds `dsh.cmd`, runs `dsh web --port 3080`, waits for the port, then opens `http://127.0.0.1:3080`.
 - Updating the key: run the configuration EXE again to update the Key and restart DSH; pass `--config-only` to only write the configuration.
@@ -22,7 +23,9 @@ A DSH one-click access toolkit for the Beijing University of Posts and Telecommu
 | File | Description |
 | --- | --- |
 | `dsh-install.zip` | One-click install archive (v1.0.0, 61.23 MB): installs DSH automatically, then guides you through configuration; for fresh machines. SHA-256: `a04ab4466b2ca8835fa46e4bdc97bfe64a650e816e0ae7480dca3fa81dde367e` |
-| `bupt-dsh-setup.zip` | One-click configuration archive (v1.0.0, 30.61 MB): for environments where DSH is already installed. SHA-256: `a78db726ac23115440f3201d29a73ed84ddacd2a029494b9c6d5f014c6dbfad5` |
+| `bupt-dsh-setup.zip` | Windows one-click configuration archive (v1.0.0, 30.61 MB): for environments where DSH is already installed. SHA-256: `23e7dd63a53fc4033e428be229b4b07f601c25e01610be0356f44d3391f94cec` |
+| `dsh-install-mac.zip` | macOS one-click installer: downloads Node.js, installs DSH, then completes configuration. SHA-256: `5412ff3b6813b578d2264378b5c1355e870ed0793c499e4be86867f0fe309303` |
+| `bupt-dsh-setup-mac.zip` | macOS one-click configuration archive for systems with Node.js/DSH already installed. SHA-256: `472b1a1b3e9b2753f04aabebe6e4a1b2fbf3b7635b255a0b301a9ed865cc8f70` |
 | `README.md` | Chinese documentation |
 | `README.en.md` | English documentation |
 | `SECURITY.md` | Security policy |
@@ -34,11 +37,17 @@ dsh-install.zip                    bupt-dsh-setup.zip
 ├── dsh-download-setup.exe        ├── bupt-dsh-setup.exe
 ├── bupt-dsh-setup.exe            └── README.txt
 └── README.txt
+
+dsh-install-mac.zip                bupt-dsh-setup-mac.zip
+├── dsh-download-setup.command     ├── bupt-dsh-setup.command
+├── configure.mjs                  ├── configure.mjs
+└── README.txt                     └── README.txt
 ```
 
 ## Requirements
 
 - Windows 10 / 11 (verified on Windows 11), 64-bit.
+- macOS 12 or later; Apple Silicon and Intel are supported.
 - `dsh-install.zip`: nothing needs to be pre-installed; internet access is required (about 50–80 MB of downloads), no administrator rights needed.
 - `bupt-dsh-setup.zip`: DSH / Node.js must already be installed, with `dsh` available from the command line (i.e. `dsh.cmd` resolvable).
 - BUPT campus network; connect to the campus VPN before use outside campus.
@@ -51,6 +60,13 @@ Quick start for new students (recommended: `dsh-install.zip`):
 2. Double-click `dsh-download-setup.exe` and wait for the automatic install (about 3–10 minutes depending on your network), no administrator rights needed.
 3. When the install finishes, type `Y` when prompted to enter the configuration flow; enter the BUPT API Key issued by the university (characters are not displayed while typing).
 4. Wait for the browser to open the DSH page (`http://127.0.0.1:3080`).
+
+For macOS users:
+
+1. Without DSH / Node.js: download `dsh-install-mac.zip`, unzip it, and double-click `dsh-download-setup.command`.
+2. With DSH / Node.js already installed: download `bupt-dsh-setup-mac.zip`, unzip it, and double-click `bupt-dsh-setup.command`.
+3. If macOS blocks the first run, right-click the `.command` file and choose “Open”; if needed, run `chmod +x *.command` in Terminal.
+4. Enter the BUPT API Key and wait for the DSH page to open.
 
 For users who already have DSH / Node.js:
 
@@ -74,7 +90,7 @@ bupt-dsh-setup.exe --config-only
 | Item | Default or location |
 | --- | --- |
 | Configuration directory | `%DSH_HOME%` (falls back to `%USERPROFILE%\.dsh`) |
-| Model configuration | `settings.yaml` (managed block for provider `bupt`) |
+| Model configuration | `settings.yaml` (managed block for provider `bupt-campus`) |
 | Local credential | `.credentials.yaml` (stores `BUPT_API_KEY`) |
 | Backup of existing config | `settings.yaml.bupt-backup-<timestamp>`, `.credentials.yaml.bupt-backup-<timestamp>` |
 | Model endpoint | `https://myai.bupt.edu.cn/llm-gw/v1`, model `deepseek-v4-flash` |
