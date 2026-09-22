@@ -2,7 +2,7 @@
 
 [简体中文](README.md) · [Security policy](SECURITY.md)
 
-A DSH one-click access toolkit for the Beijing University of Posts and Telecommunications (BUPT) campus-network environment, with configuration and installer packages for Windows and macOS. Unzip the archive and double-click the corresponding entry point; enter the BUPT API Key issued by the university, and the tool writes the DSH configuration and local credential, starts DSH Web, and opens the page in your browser. Current version: **1.0.0**.
+A DSH one-click access toolkit for the Beijing University of Posts and Telecommunications (BUPT) campus-network environment, with configuration and installer packages for Windows and macOS. Unzip the archive and double-click the corresponding entry point; enter the BUPT API Key issued by the university, and the tool writes the DSH configuration and local credential, starts DSH Web, and opens the page in your browser. Current version: **1.0.1**.
 
 ## Features and boundaries
 
@@ -15,6 +15,7 @@ A DSH one-click access toolkit for the Beijing University of Posts and Telecommu
 - macOS support: `.command` one-click entry points support both Apple Silicon (arm64) and Intel (x86_64).
 - Endpoint probe: the BUPT endpoint is probed before launch (12 s timeout); if unreachable, a hint is printed and DSH still starts.
 - Automatic launch: finds `dsh.cmd`, runs `dsh web --port 3080`, waits for the port, then opens `http://127.0.0.1:3080`.
+- Quick relaunch: after first-time configuration, double-click `start-dsh.cmd` (Windows) or `start-dsh.command` (macOS) to start DSH without entering the API Key again.
 - Updating the key: run the configuration EXE again to update the Key and restart DSH; pass `--config-only` to only write the configuration.
 - Boundaries: API Key issuance, account registration, and billing are out of scope.
 
@@ -22,10 +23,10 @@ A DSH one-click access toolkit for the Beijing University of Posts and Telecommu
 
 | File | Description |
 | --- | --- |
-| `dsh-install.zip` | One-click install archive (v1.0.0, 61.23 MB): installs DSH automatically, then guides you through configuration; for fresh machines. SHA-256: `1500f5b3393ecd918eb7d3e06374b8f43f5de7e62f570a867301d46bdd1552f0` |
-| `bupt-dsh-setup.zip` | Windows one-click configuration archive (v1.0.0, 30.61 MB): for environments where DSH is already installed. SHA-256: `23e7dd63a53fc4033e428be229b4b07f601c25e01610be0356f44d3391f94cec` |
-| `dsh-install-mac.zip` | macOS one-click installer: downloads Node.js, installs DSH, then completes configuration. SHA-256: `c7ee78eff80066bb37a2d2f15b82e07dc216809e2108bd0b29fc8d07ca0dd0d1` |
-| `bupt-dsh-setup-mac.zip` | macOS one-click configuration archive for systems with Node.js/DSH already installed. SHA-256: `12a915c0729bdbbfa2ae0575e171a55ced0b3a58fc1dd45c1e155826e0f5f852` |
+| `dsh-install.zip` | One-click install archive (v1.0.1, 61.23 MB): installs DSH automatically, then guides you through configuration; for fresh machines. SHA-256: `fcc3130b606f341e7402d673cd38e548a1bfc2ab294ae0209a69bb91ae10c38f` |
+| `bupt-dsh-setup.zip` | Windows one-click configuration archive (v1.0.1, 30.61 MB): for environments where DSH is already installed. SHA-256: `bbc9588c25688f8bad957f1ad779218565191213ed90ecb75fba4cd97d4d7ab` |
+| `dsh-install-mac.zip` | macOS one-click installer: downloads Node.js, installs DSH, then completes configuration. SHA-256: `858b97486dcf11482225138f8dd8b53578a8fa7ad8d400f0ddee336187d649ef` |
+| `bupt-dsh-setup-mac.zip` | macOS one-click configuration archive for systems with Node.js/DSH already installed. SHA-256: `39a2cc8f48b4f724ad7cf1f42c3ff0bf392fe0c198d42eaddb1092f91b68faa6` |
 | `README.md` | Chinese documentation |
 | `README.en.md` | English documentation |
 | `SECURITY.md` | Security policy |
@@ -35,11 +36,13 @@ Contents of the archives:
 ```text
 dsh-install.zip                    bupt-dsh-setup.zip
 ├── dsh-download-setup.exe        ├── bupt-dsh-setup.exe
-├── bupt-dsh-setup.exe            └── README.txt
+├── bupt-dsh-setup.exe            ├── start-dsh.cmd
+├── start-dsh.cmd                  └── README.txt
 └── README.txt
 
 dsh-install-mac.zip                bupt-dsh-setup-mac.zip
 ├── dsh-download-setup.command     ├── bupt-dsh-setup.command
+├── start-dsh.command              ├── start-dsh.command
 ├── configure.mjs                  ├── configure.mjs
 └── README.txt                     └── README.txt
 ```
@@ -60,6 +63,7 @@ Quick start for new students (recommended: `dsh-install.zip`):
 2. Double-click `dsh-download-setup.exe` and wait for the automatic install (about 3–10 minutes depending on your network), no administrator rights needed.
 3. When the install finishes, type `Y` when prompted to enter the configuration flow; enter the BUPT API Key issued by the university (characters are not displayed while typing).
 4. Wait for the browser to open the DSH page (`http://127.0.0.1:3080`).
+5. Later, double-click `start-dsh.cmd` in the same folder to relaunch DSH without entering the API Key again.
 
 For macOS users:
 
@@ -67,6 +71,7 @@ For macOS users:
 2. With DSH / Node.js already installed: download `bupt-dsh-setup-mac.zip`, unzip it, and double-click `bupt-dsh-setup.command`.
 3. If macOS blocks the first run, right-click the `.command` file and choose “Open”; if needed, run `chmod +x *.command` in Terminal.
 4. Enter the BUPT API Key and wait for the DSH page to open.
+5. Later, double-click `start-dsh.command` in the same folder to relaunch DSH without entering the API Key again.
 
 For users who already have DSH / Node.js:
 
@@ -74,6 +79,7 @@ For users who already have DSH / Node.js:
 2. Double-click `bupt-dsh-setup.exe`.
 3. Enter the BUPT API Key issued by the university (characters are not displayed while typing).
 4. Wait for the browser to open the DSH page (`http://127.0.0.1:3080`).
+5. Later, double-click `start-dsh.cmd` in the same folder to relaunch DSH without entering the API Key again.
 
 Write the configuration only, without launching:
 

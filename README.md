@@ -2,7 +2,7 @@
 
 [English](README.en.md) · [安全策略](SECURITY.md)
 
-面向北京邮电大学校园网环境的 DSH 一键接入工具集，提供 Windows 与 macOS 两个平台的配置包和安装包。解压后双击对应入口，输入学校发放的 BUPT API Key，程序即写入 DSH 配置与本地凭据、启动 DSH Web，并自动打开浏览器页面。当前版本：**1.0.0**。
+面向北京邮电大学校园网环境的 DSH 一键接入工具集，提供 Windows 与 macOS 两个平台的配置包和安装包。解压后双击对应入口，输入学校发放的 BUPT API Key，程序即写入 DSH 配置与本地凭据、启动 DSH Web，并自动打开浏览器页面。当前版本：**1.0.1**。
 
 ## 功能与边界
 
@@ -15,6 +15,7 @@
 - macOS 支持：提供 Apple Silicon（arm64）与 Intel（x86_64）的 `.command` 一键入口。
 - 接口探活：启动前探测北邮接口（12 秒超时）；不可达时给出提示，仍会继续启动 DSH。
 - 自动启动：查找 `dsh.cmd` 并执行 `dsh web --port 3080`，等待端口就绪后打开 `http://127.0.0.1:3080`。
+- 快捷启动：首次配置完成后，双击 `start-dsh.cmd`（Windows）或 `start-dsh.command`（macOS）即可启动 DSH，无需再次输入 API Key。
 - 更新密钥：再次运行配置 EXE 可更新 Key 并重新启动 DSH；使用 `--config-only` 参数只写入配置、不启动。
 - 边界：不负责 API Key 的申请与发放，不支持账号注册或缴费业务。
 
@@ -22,10 +23,10 @@
 
 | 文件 | 说明 |
 | --- | --- |
-| `dsh-install.zip` | 一键安装包（v1.0.0，61.23 MB）：自动安装 DSH 后进入配置流程，适合未安装 DSH 的新机。SHA-256：`1500f5b3393ecd918eb7d3e06374b8f43f5de7e62f570a867301d46bdd1552f0` |
-| `bupt-dsh-setup.zip` | Windows 一键配置包（v1.0.0，30.61 MB）：面向已安装 DSH 的环境，直接配置并启动。SHA-256：`23e7dd63a53fc4033e428be229b4b07f601c25e01610be0356f44d3391f94cec` |
-| `dsh-install-mac.zip` | macOS 一键安装包：自动下载 Node.js、安装 DSH，再完成配置。SHA-256：`c7ee78eff80066bb37a2d2f15b82e07dc216809e2108bd0b29fc8d07ca0dd0d1` |
-| `bupt-dsh-setup-mac.zip` | macOS 一键配置包：面向已安装 Node.js/DSH 的环境。SHA-256：`12a915c0729bdbbfa2ae0575e171a55ced0b3a58fc1dd45c1e155826e0f5f852` |
+| `dsh-install.zip` | 一键安装包（v1.0.1，61.23 MB）：自动安装 DSH 后进入配置流程，适合未安装 DSH 的新机。SHA-256：`fcc3130b606f341e7402d673cd38e548a1bfc2ab294ae0209a69bb91ae10c38f` |
+| `bupt-dsh-setup.zip` | Windows 一键配置包（v1.0.1，30.61 MB）：面向已安装 DSH 的环境，直接配置并启动。SHA-256：`bbc9588c25688f8bad957f1ad779218565191213ed90ecb75fba4cd97d4d7ab` |
+| `dsh-install-mac.zip` | macOS 一键安装包：自动下载 Node.js、安装 DSH，再完成配置。SHA-256：`858b97486dcf11482225138f8dd8b53578a8fa7ad8d400f0ddee336187d649ef` |
+| `bupt-dsh-setup-mac.zip` | macOS 一键配置包：面向已安装 Node.js/DSH 的环境。SHA-256：`39a2cc8f48b4f724ad7cf1f42c3ff0bf392fe0c198d42eaddb1092f91b68faa6` |
 | `README.md` | 中文文档 |
 | `README.en.md` | 英文文档 |
 | `SECURITY.md` | 安全策略 |
@@ -35,11 +36,13 @@
 ```text
 dsh-install.zip                    bupt-dsh-setup.zip
 ├── dsh-download-setup.exe        ├── bupt-dsh-setup.exe
-├── bupt-dsh-setup.exe            └── README.txt
+├── bupt-dsh-setup.exe            ├── start-dsh.cmd
+├── start-dsh.cmd                  └── README.txt
 └── README.txt
 
 dsh-install-mac.zip                bupt-dsh-setup-mac.zip
 ├── dsh-download-setup.command     ├── bupt-dsh-setup.command
+├── start-dsh.command              ├── start-dsh.command
 ├── configure.mjs                  ├── configure.mjs
 └── README.txt                     └── README.txt
 ```
@@ -60,6 +63,7 @@ dsh-install-mac.zip                bupt-dsh-setup-mac.zip
 2. 双击 `dsh-download-setup.exe`，等待自动安装（约 3–10 分钟，视网络而定），全程无需管理员权限。
 3. 安装完成后按提示输入 `Y` 进入配置流程；输入学校发放的 BUPT API Key（输入时不显示字符）。
 4. 等待浏览器自动打开 DSH 页面（`http://127.0.0.1:3080`）。
+5. 以后可直接双击同目录的 `start-dsh.cmd` 快捷启动，无需再次输入 API Key。
 
 macOS 用户：
 
@@ -67,6 +71,7 @@ macOS 用户：
 2. 已安装 DSH / Node.js：下载 `bupt-dsh-setup-mac.zip`，解压后双击 `bupt-dsh-setup.command`。
 3. 如果 macOS 首次阻止运行，请右键 `.command` 文件选择“打开”；仍被阻止时在终端执行 `chmod +x *.command`。
 4. 输入学校发放的 BUPT API Key，等待浏览器打开 DSH 页面。
+5. 以后可直接双击同目录的 `start-dsh.command` 快捷启动，无需再次输入 API Key。
 
 已安装 DSH / Node.js 的用户：
 
@@ -74,6 +79,7 @@ macOS 用户：
 2. 双击 `bupt-dsh-setup.exe`。
 3. 输入学校发放的 BUPT API Key（输入时不显示字符）。
 4. 等待浏览器自动打开 DSH 页面（`http://127.0.0.1:3080`）。
+5. 以后可直接双击同目录的 `start-dsh.cmd` 快捷启动，无需再次输入 API Key。
 
 仅写入配置、不启动：
 
